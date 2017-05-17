@@ -4,6 +4,9 @@ import Popover from 'react-simple-popover'
 import Datetime from 'react-datetime'
 import moment from 'moment'
 
+require('./filter-dropdown.scss');
+require('./react-simple-popover.scss');
+
 
 class FilterDropdown extends React.Component {
   constructor(props) {

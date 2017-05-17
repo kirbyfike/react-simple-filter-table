@@ -7,7 +7,6 @@ import FilterTags from './FilterTags'
 
 
 class Filter extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -36,40 +35,84 @@ class Filter extends React.Component {
     this.props.filterUpdated(this.state.filterObject)
   }
 
-  onUpdatedFilterTag = (newFilters) => {
+  buildFilterTags() {
+    var filterObjects = Object.keys(this.props.filterObject)
 
-    var obj = {};
-    newFilters.forEach(function(data){
-      obj[data.columnName] = data.sort
-    });
+    var inputData = filterObjects.map(function(a) {
 
-    this.props.filterTagUpdated(obj)
+      var returnObject = {}
+      this.props.categories.forEach(function (b) {
+
+        if (b.columnName === a) {
+          var valuesObject = this.props.filterObject[a]
+          if (b.datatype === "multiselect") {
+
+            var validList = b.values.filter((item) => valuesObject["$in"].includes(item.value))
+            .map((item) => {
+              return item.label
+            })
+
+            returnObject = {key: a, label: `${b.label}: ${validList.toString()}`}
+          } else if (b.datatype === "date" || b.datatype === "number") {
+
+            var ltValue = ""
+            var gtValue = ""
+
+            if (b.datatype === "date") {
+              ltValue = moment(valuesObject["$lt"]).format("MM/DD/YYYY")
+              gtValue = moment(valuesObject["$gt"]).format("MM/DD/YYYY")
+            } else {
+              var formatter = new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 2,
+              });
+
+              ltValue = formatter.format(valuesObject["$lt"])
+              gtValue = formatter.format(valuesObject["$gt"])
+            }
+
+
+            var language = ""
+
+            if (valuesObject["$gt"] && (valuesObject["$lt"])) {
+              language += `${gtValue} - ${ltValue}`
+            } else if (a.sort["$gt"]) {
+              language += `Greater than: ${gtValue}`
+            } else if (a.sort["$lt"]) {
+              language += `Less than: ${ltValue}`
+            }
+
+            returnObject = {key: a, label: `${b.label}: ${language}`}
+          }
+
+        }
+      }, this)
+
+      return returnObject
+    }, this);
+
+    return inputData
+  }
+
+  removeFilterTag = (removedKey) => {
+
+    if (this.state.filterObject[removedKey]) {
+      delete this.state.filterObject[removedKey]
+    }
+
+    this.props.filterTagUpdated(this.state.filterObject)
   }
 
   render () {
 
     var filterObject = this.state.filterObject
-
-    const filterTabObject = Object.keys(filterObject).map(function(key, index) {
-      var found = false
-      var returnObject = {}
-      this.props.categories.forEach(function (a) {
-        if (a.columnName === key) {
-          found = true
-          returnObject = {"columnName": key, "sort": filterObject[key], "datatype": a.datatype, "label": a.label}
-          return
-        }
-      })
-
-      if (found) {
-        return returnObject
-      }
-    }, this)
+    const filterTagObjects = this.buildFilterTags()
 
     return (
       <div>
         <FilterDropdown label={this.props.label} onUpdate={this.onUpdatedFilter} filterData={this.props.categories} />
-        <FilterTags onUpdate={this.onUpdatedFilterTag} filterObject={filterTabObject} />
+        <FilterTags removeFilterTag={this.removeFilterTag} filterTagObjects={filterTagObjects} />
       </div>
     )
   }
