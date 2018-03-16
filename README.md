@@ -10,7 +10,9 @@ npm install react-simple-filter-table
 ```
 import Filter from './Filter'
 
-let objectData = [];
+let objectData = [
+  {col1: "hello", col2: "12/12/93", col3: "42000"}
+];
 
 let categories = {columnName: "col1", label: "Channel", datatype: "multiselect", values: [{value: "option1", label: "Option 1"}, {value: "option2", label: "Option 1"}]},
 {columnName: "col2", label: "Date", datatype: "date"},
