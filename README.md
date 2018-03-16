@@ -7,6 +7,8 @@ A UI React component to search table data and visualize it.
 npm install react-simple-filter-table
 
 ### Usage
+```
+
 let objectData = [];
 
 let categories = {columnName: "col1", label: "Channel", datatype: "multiselect", values: [{value: "option1", label: "Option 1"}, {value: "option2", label: "Option 1"}]},
@@ -20,3 +22,4 @@ filterUpdated={this.filterUpdated}
 filterTagUpdated={this.filterTagUpdated}
 label="Filter Opportunities"
 name="Opportunities"/>
+```
