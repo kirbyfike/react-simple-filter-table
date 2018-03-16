@@ -8,6 +8,7 @@ npm install react-simple-filter-table
 
 ### Usage
 ```
+import Filter from './Filter'
 
 let objectData = [];
 
