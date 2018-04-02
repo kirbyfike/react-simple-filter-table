@@ -4,7 +4,9 @@ A UI React component to search table data and visualize it.
 
 ## Getting Started
 
-npm install react-simple-filter-table
+Todo: 
+1) Get on npm
+2) Finish files
 
 ### Usage
 ```
