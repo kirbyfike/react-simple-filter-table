@@ -18,36 +18,40 @@ class Filter extends React.Component {
   }
 
   componentDidMount() {
-    var filterObject = (this.props.filterObject) ? this.props.filterObject : {}
+    // pull the filter object and set params
+    let filterObject = (this.props.filterObject) ? this.props.filterObject : {}
     this.setState({filterObject: filterObject})
   }
 
   onUpdatedFilter = (newFilter) => {
 
+    // user updates and receive the keys
     var selectedKey = Object.keys(newFilter)[0]
 
+    // if key is set, remove it
     if (this.state.filterObject[selectedKey]) {
       delete this.state.filterObject[selectedKey]
     }
-
+    
     this.state.filterObject[selectedKey] = newFilter[selectedKey]
 
     this.props.filterUpdated(this.state.filterObject)
   }
 
   buildFilterTags() {
-    var filterObjects = Object.keys(this.props.filterObject)
+    let filterObjects = Object.keys(this.props.filterObject)
 
-    var inputData = filterObjects.map(function(a) {
+    // build the inputted data based on user params
+    let inputData = filterObjects.map(function(a) {
 
-      var returnObject = {}
+      let returnObject = {}
       this.props.categories.forEach(function (b) {
 
         if (b.columnName === a) {
-          var valuesObject = this.props.filterObject[a]
+          let valuesObject = this.props.filterObject[a]
           if (b.datatype === "multiselect") {
 
-            var validList = b.values.filter((item) => valuesObject["$in"].includes(item.value))
+            let validList = b.values.filter((item) => valuesObject["$in"].includes(item.value))
             .map((item) => {
               return item.label
             })
@@ -55,14 +59,14 @@ class Filter extends React.Component {
             returnObject = {key: a, label: `${b.label}: ${validList.toString()}`}
           } else if (b.datatype === "date" || b.datatype === "number") {
 
-            var ltValue = ""
-            var gtValue = ""
+            let ltValue = ""
+            let gtValue = ""
 
             if (b.datatype === "date") {
               ltValue = moment(valuesObject["$lt"]).format("MM/DD/YYYY")
               gtValue = moment(valuesObject["$gt"]).format("MM/DD/YYYY")
             } else {
-              var formatter = new Intl.NumberFormat('en-US', {
+              let formatter = new Intl.NumberFormat('en-US', {
                 style: 'currency',
                 currency: 'USD',
                 minimumFractionDigits: 2,
@@ -73,7 +77,7 @@ class Filter extends React.Component {
             }
 
 
-            var language = ""
+            let language = ""
 
             if (valuesObject["$gt"] && (valuesObject["$lt"])) {
               language += `${gtValue} - ${ltValue}`
@@ -97,6 +101,7 @@ class Filter extends React.Component {
 
   removeFilterTag = (removedKey) => {
 
+    // remove the newest filter tag
     if (this.state.filterObject[removedKey]) {
       delete this.state.filterObject[removedKey]
     }
